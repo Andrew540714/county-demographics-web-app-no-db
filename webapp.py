@@ -17,8 +17,10 @@ def render_fact():
     states = get_state_options()
     state = request.args.get('state')
     county = county_most_under_18(state)
+    county1 = county_65_and_older(state)
     fact = "In " + state + ", the county with the highest percentage of under 18 year olds is " + county + "."
-    return render_template('home.html', state_options=states, funFact=fact)
+    fact2 = "In " + state + ", the county with the highest percentage of 65 years and older people is " + county1 + "."
+    return render_template('home.html', state_options=states, funFact=fact, funFact2 = fact2)
     
 def get_state_options():
     """Return the html code for the drop down menu.  Each option is a state abbreviation from the demographic data."""
@@ -45,6 +47,19 @@ def county_most_under_18(state):
                 highest = c["Age"]["Percent Under 18 Years"]
                 county = c["County"]
     return county
+    
+def county_65_and_older(state):
+    """Return the name of a county in the given state with the highest percent of under 18 year olds."""
+    with open('demographics.json') as demographics_data:
+        counties = json.load(demographics_data)
+    highest=0
+    county1 = ""
+    for c in counties:
+        if c["State"] == state:
+            if c["Age"]["Percent 65 and Older"] > highest:
+                highest = c["Age"]["Percent 65 and Older"]
+                county1 = c["County"]
+    return county1
 
 def is_localhost():
     """ Determines if app is running on localhost or not
